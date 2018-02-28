@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "f2b-wsl", "f2b-wsl\f2b-wsl.csproj", "{BDA1E135-8133-4FEE-A803-9124A568DC37}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BDA1E135-8133-4FEE-A803-9124A568DC37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDA1E135-8133-4FEE-A803-9124A568DC37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDA1E135-8133-4FEE-A803-9124A568DC37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDA1E135-8133-4FEE-A803-9124A568DC37}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC6A2DB7-2FE9-467D-86A5-6BE6F559BE74}
+	EndGlobalSection
+EndGlobal
