@@ -17,7 +17,7 @@ namespace f2b_wsl
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new Fail2BanService()
             };
             ServiceBase.Run(ServicesToRun);
         }

@@ -1,6 +1,6 @@
 ﻿namespace f2b_wsl
 {
-    partial class Service1
+    partial class Fail2BanService
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -28,8 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.ServiceName = "Service1";
+            // 
+            // Fail2BanService
+            // 
+            this.AutoLog = false;
+            this.ServiceName = "Fail2Ban for WSL in CSharp";
+
         }
 
         #endregion
