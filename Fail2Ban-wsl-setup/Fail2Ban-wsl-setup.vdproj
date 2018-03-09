@@ -15,32 +15,20 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_28F07167E5B7EFD264810C1428C4FC08"
-        "OwnerKey" = "8:_E3B49AABA8F249179FB83306C670D853"
+        "MsmKey" = "8:_158AD5A193A12E7090082CC7924BAA3F"
+        "OwnerKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_28F07167E5B7EFD264810C1428C4FC08"
-        "OwnerKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
+        "MsmKey" = "8:_158AD5A193A12E7090082CC7924BAA3F"
+        "OwnerKey" = "8:_E3B49AABA8F249179FB83306C670D853"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_7C4D3BD55BEC4B78AF252CDA835CDDDF"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7DE3FCF6912C178B0CAE50DF73C15322"
-        "OwnerKey" = "8:_E3B49AABA8F249179FB83306C670D853"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7DE3FCF6912C178B0CAE50DF73C15322"
-        "OwnerKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -69,20 +57,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E262D8553770AE22FA34547A046ED24C"
+        "OwnerKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E262D8553770AE22FA34547A046ED24C"
+        "OwnerKey" = "8:_E3B49AABA8F249179FB83306C670D853"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E3B49AABA8F249179FB83306C670D853"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_28F07167E5B7EFD264810C1428C4FC08"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -94,7 +82,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7DE3FCF6912C178B0CAE50DF73C15322"
+        "OwnerKey" = "8:_E262D8553770AE22FA34547A046ED24C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_158AD5A193A12E7090082CC7924BAA3F"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -115,6 +115,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -131,6 +139,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -216,14 +240,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_28F07167E5B7EFD264810C1428C4FC08"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_158AD5A193A12E7090082CC7924BAA3F"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
-                    "_28F07167E5B7EFD264810C1428C4FC08"
+                    "_158AD5A193A12E7090082CC7924BAA3F"
                     {
                     "Name" = "8:System.Net.Http.dll"
                     "Attributes" = "3:512"
@@ -265,37 +289,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7DE3FCF6912C178B0CAE50DF73C15322"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PluginAPIs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_7DE3FCF6912C178B0CAE50DF73C15322"
-                    {
-                    "Name" = "8:PluginAPIs.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:PluginAPIs.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_627D9B373E8B48B6968D84DBDF0575B5"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A959D38E29D742F9B047C0D9C2BD516B"
@@ -356,6 +349,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E262D8553770AE22FA34547A046ED24C"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:PluginAPIs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_E262D8553770AE22FA34547A046ED24C"
+                    {
+                    "Name" = "8:PluginAPIs.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:PluginAPIs.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_627D9B373E8B48B6968D84DBDF0575B5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
         }
@@ -425,15 +449,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Fail 2 Ban for WSL"
-        "ProductCode" = "8:{49170EBF-FD6B-49CA-9D98-BB6C4FF2A302}"
-        "PackageCode" = "8:{24362FB0-BD4F-4365-A991-42AB90EE7D54}"
+        "ProductCode" = "8:{747C1077-773A-451A-A0F0-A5AD6198FF45}"
+        "PackageCode" = "8:{1FBB127E-3F08-4635-A1A2-DB1A361D1E6B}"
         "UpgradeCode" = "8:{B6DFB892-EC94-4237-AF14-20E373F7B16E}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:mingl0280"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/mingl0280/fail2ban-wsl"

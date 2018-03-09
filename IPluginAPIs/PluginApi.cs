@@ -40,7 +40,6 @@ namespace PluginAPIs
     public delegate void AfterBadIPDetectedDelegate(object sender, PluginEventArgs args);
     public delegate void OnBadIPDetectedDelegate(object sender, PluginEventArgs args);
 
-
     public abstract class IPlugin : IPluginEvent
     {
         public event AfterBadIPDetectedDelegate AfterBadIPDetected;

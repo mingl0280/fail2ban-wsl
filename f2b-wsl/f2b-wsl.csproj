@@ -49,8 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigFile.cs" />
-    <Compile Include="ConfigLineParser.cs" />
     <Compile Include="f2b-wsl.cs">
       <SubType>Component</SubType>
     </Compile>

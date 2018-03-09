@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="UnitTest_EnvInit.cs" />
     <Compile Include="UnitTest_OnStart.cs" />
-    <Compile Include="UnitTest_LineParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

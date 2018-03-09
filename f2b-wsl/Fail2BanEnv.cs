@@ -29,7 +29,7 @@ using static PluginAPIs.EventLogEnums;
 
 namespace f2b_wsl
 {
-    public class Fail2BanEnv
+    public class Fail2BanEnv : IDisposable
     {
         private string _f2bDirectoryString;
         private DirectoryInfo _f2bDirInfo;
@@ -44,6 +44,7 @@ namespace f2b_wsl
         private object IOLock= new object();
         private List<string> CachedDummyFileContent = new List<string>();
         private string CachedDummyFile = "";
+        private bool disposedValue = false;
 
         public string F2bDirectoryString { get => _f2bDirectoryString; set => _f2bDirectoryString = value; }
         public List<string> PluginList { get => _pluginList; set => _pluginList = value; }
@@ -71,14 +72,15 @@ namespace f2b_wsl
         public void StartMonitorThread()
         {
             monitorThread = new Thread(DummyMonitor);
-            monitorThread.Start();
+            //monitorThread.Start();
         }
 
         private void DummyMonitor()
         {
             while (true)
             {
-                Thread.Sleep(10000);
+                Thread.Sleep(1000);
+                Thread.Yield();
             }
         }
 
@@ -104,6 +106,10 @@ namespace f2b_wsl
                 Fail2BanDummyFileWatcher = new FileSystemWatcher(DummyFileDirectory + @"\");
                 Fail2BanDummyFileWatcher.Changed += Fail2BanDummyFileWatcher_Changed;
                 Fail2BanDummyFileWatcher.Deleted += Fail2BanDummyFileWatcher_Deleted;
+#if DEBUG
+                Thread.Sleep(10000);
+#endif
+                Fail2BanDummyFileWatcher.EnableRaisingEvents = true;
                 
             }catch(Exception e)
             {
@@ -112,7 +118,7 @@ namespace f2b_wsl
             }
             FileContentChangeHandle(DummyFileDirectory + "\\" + DummyFileName);
         }
-
+        
         private void Fail2BanDummyFileWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
             lock (IOLock)
@@ -146,7 +152,11 @@ namespace f2b_wsl
             StreamReader sr = new StreamReader(filePath);
             string tmpFile = sr.ReadToEnd();
             if (tmpFile == CachedDummyFile)
-            { return; }
+            {
+                sr.Close();
+                sr.Dispose();
+                return;
+            }
             else
             {
                 CachedDummyFile = tmpFile;
@@ -167,6 +177,26 @@ namespace f2b_wsl
                     }
                 }
             }
+            sr.Close();
+            sr.Dispose();
+        }
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    Fail2BanDummyFileWatcher.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
         }
 
     }

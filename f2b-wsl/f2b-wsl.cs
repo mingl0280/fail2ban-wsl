@@ -161,6 +161,7 @@ namespace f2b_wsl
         {
             // monitor all Fail2BanEnv to see if thread aborted or not.
             // auto restart these threads.
+            DumpPlugins();
             while (true)
             {
                 foreach(KeyValuePair<string, Fail2BanEnv> EnvItem in F2BEnvPool)
@@ -172,12 +173,8 @@ namespace f2b_wsl
                         env.StartMonitorThread();
                     }
                 }
-                Thread.Sleep(10000);/*
-                foreach(IPlugin WaitForCallPlugin in plugins)
-                {
-                    //WaitForCallPlugin.RaiseAfterBadIPDetected( this, new PluginEventArgs() { EventSource = "test", EventTextContent = "DemoPluginTest", EventType = "test" });
-                    DumpPlugins();
-                }*/
+                Thread.Sleep(1000);
+                Thread.Yield();
             }
         }
 
