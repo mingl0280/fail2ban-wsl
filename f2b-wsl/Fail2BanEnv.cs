@@ -149,7 +149,10 @@ namespace f2b_wsl
 
         private void FileContentChangeHandle(string filePath)
         {
-            StreamReader sr = new StreamReader(filePath);
+            StreamReader sr;
+            FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            sr = new StreamReader(fs);
+            
             string tmpFile = sr.ReadToEnd();
             if (tmpFile == CachedDummyFile)
             {
