@@ -37,7 +37,6 @@ This tool reads the fail2ban.dummy(default, you can modify it in dummy.action), 
 4. You need to edit the action for the fail2ban jails. 
 You may use jail.conf / jail.local to set the default action to dummy-wsl, 
 you can also add a "action = dummy-wsl" to each jail section you enabled or configured under jail.d.
-       
 Here's an example:
 
 ```
@@ -51,4 +50,5 @@ action = dummy-wsl
 5. You will need to use InstallUtil.exe to install the service. The service runs as LocalSystem account so you have to install it using an administrator account.
 6. You can check IPluginAPIs and PluginDemo to start your own plugin. Please put the plugins under the "Plugins" folder.
     
+
 This program is published under GNU General Public License v3.0.
