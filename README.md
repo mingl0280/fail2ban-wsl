@@ -11,11 +11,14 @@ This tool reads the fail2ban.dummy(default, you can modify it in dummy.action), 
 ## How to use
 
     1. You need to modify the original fail2ban configurations:
+   
 ```
     cd /etc/fail2ban/action.d/
     cp dummy.conf dummy-wsl.conf  #this cannot be changed
 ```
+
     2. Then you need to edit the dummy-wsl file. Changing all the /var/run into /tmp or anywhere else that is not a tmpfs directory.
+    
 ```
     vi dummy-wsl.conf
     :%s/\/var\/run/[your desired directory]/g
@@ -26,14 +29,17 @@ This tool reads the fail2ban.dummy(default, you can modify it in dummy.action), 
 ```
     
     3. You need to manually create the directory you specified in the step 1
+
 ```
     mkdir /tmp/fail2ban
 ```
+
     4. You need to edit the action for the fail2ban jails. 
        You may use jail.conf / jail.local to set the default action to dummy-wsl, 
        you can also add a "action = dummy-wsl" to each jail section you enabled or configured under jail.d.
        
        Here's an example:
+
 ```
 [sshd]
 enabled = true
