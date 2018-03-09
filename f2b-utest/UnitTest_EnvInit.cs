@@ -20,27 +20,38 @@
 */
 #endregion
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using f2b_wsl;
+using FirewallPolicyPlugin;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace f2b_wsl
+namespace f2b_utest
 {
-    static class Program
+    [TestClass]
+    public class UnitTest_EnvInit
     {
-        /// <summary>
-        /// 应用程序的主入口点。
-        /// </summary>
-        static void Main()
+        [TestMethod]
+        public void TestMethod_FwPlugin()
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
+            FirewallPolicyModifier fwp = new FirewallPolicyModifier();
+            EventLog eLog = new EventLog();
+            eLog.BeginInit();
+            if (!EventLog.SourceExists("Fail2BanWin"))
             {
-                new Fail2BanService()
-            };
-            ServiceBase.Run(ServicesToRun);
+                EventLog.CreateEventSource("Fail2BanWin", "Fail2BanWin");
+            }
+            eLog.EndInit();
+            eLog.Source = "Fail2BanWin";
+            eLog.Log = "Fail2BanWin";
+            fwp.RegisterPlugin(eLog);
+            fwp.OnLoad();
+
+            fwp.RaiseBIPDeteacted("+212.2.2.2");
+            fwp.RaiseBIPDeteacted("+123.12.2.34");
+            fwp.RaiseBIPDeteacted("-212.2.2.2");
+
+            fwp.RaiseBIPDeteacted("-123.12.2.34");
         }
     }
+    
 }

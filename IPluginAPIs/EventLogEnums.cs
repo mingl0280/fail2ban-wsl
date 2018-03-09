@@ -22,25 +22,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace f2b_wsl
+namespace PluginAPIs
 {
-    static class Program
+    public class EventLogEnums
     {
-        /// <summary>
-        /// 应用程序的主入口点。
-        /// </summary>
-        static void Main()
+        public enum LogCategories
         {
-            ServiceBase[] ServicesToRun;
-            ServicesToRun = new ServiceBase[]
-            {
-                new Fail2BanService()
-            };
-            ServiceBase.Run(ServicesToRun);
+            Log_Info = 0,
+            Log_Warning = 1,
+            Log_Error = 2
+        }
+        public enum LogIDs
+        {
+            Log_Starting = 0,
+            Log_Notice_FoundF2B = 1,
+            Log_Notice_Quit = 2,
+            Log_Plugin_Activated = 3,
+            Log_Plugin_Deactivated = 4,
+            Log_Notice_PlainInfo = 5,
+            Log_Notice_DependencyStarting = 6,
+            Log_Error_Generic = 1000,
+            Log_Error_ParseFile = 1001,
+            Log_Error_NoF2BFound = 1002,
+            Log_Error_NoPluginFound = 1003,
+            Log_Error_Plugin = 1004
         }
     }
 }

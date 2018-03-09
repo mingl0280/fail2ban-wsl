@@ -1,21 +1,38 @@
-﻿using System;
+﻿#region "License Declearation"
+/*
+    fail2ban-wsl: a tool to port fail2ban into windows environment
+    Copyright (C) 2018 mingl0280
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+    Contact: mingl0280@gmail.com for more information.
+*/
+#endregion
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.IO;
-using NetFwTypeLib;
-using System.Text;
 using System.Threading;
-using System.DirectoryServices.AccountManagement;
-using System.Security.Principal;
 using System.Management;
 using Microsoft.Win32;
 using PluginAPIs;
 using System.Collections;
 using System.Reflection;
+using static PluginAPIs.EventLogEnums;
 
 namespace f2b_wsl
 {
@@ -34,32 +51,11 @@ namespace f2b_wsl
             EventLog.Log = "Fail2BanWin";
         }
 
-        public enum LogIDs
-        {
-            Log_Starting = 0,
-            Log_Notice_FoundF2B = 1,
-            Log_Notice_Quit = 2,
-            Log_Plugin_Activated = 3,
-            Log_Plugin_Deactivated = 4,
-            Log_Notice_PlainInfo = 5,
-
-            Log_Error_Generic = 1000,
-            Log_Error_ParseFile = 1001,
-            Log_Error_NoF2BFound = 1002,
-            Log_Error_NoPluginFound = 1003,
-            Log_Error_Plugin = 1004
-        }
-
-        public enum LogCategories
-        {
-            Log_Info = 0,
-            Log_Warning = 1,
-            Log_Error = 2
-        }
-
         private ArrayList plugins = new ArrayList();
-        private Dictionary<string, Fail2BanEnv> F2BEnvPool = new Dictionary<string, Fail2BanEnv>();
+        public Dictionary<string, Fail2BanEnv> F2BEnvPool = new Dictionary<string, Fail2BanEnv>();
         private Thread F2BEnvMonitorThread;
+
+        public ArrayList Plugins { get => plugins; set => plugins = value; }
 
         protected override void OnStart(string[] args)
         {
@@ -85,7 +81,7 @@ namespace f2b_wsl
                     if (Directory.Exists(LxssPath))
                     {
                         EventLog.WriteEntry("Found fail2ban under dir:" + LxssPath, EventLogEntryType.Information, (int)LogIDs.Log_Starting, (short)LogCategories.Log_Info);
-                        F2BEnvPool.Add(LxssPath, new Fail2BanEnv(LxssPath));
+                        F2BEnvPool.Add(LxssPath, new Fail2BanEnv(LxssPath, this));
                     }
                 }
             }
@@ -98,6 +94,7 @@ namespace f2b_wsl
             else
             {
                 F2BEnvMonitorThread = new Thread(F2BEnvMonitor);
+                
                 F2BEnvMonitorThread.Start();
             }
         }
@@ -113,6 +110,7 @@ namespace f2b_wsl
                 EventLog.WriteEntry("No plugins found.", EventLogEntryType.Information, (int)LogIDs.Log_Error_NoPluginFound, (short)LogCategories.Log_Info);
                 return;
             }
+            // Plugin initialize and add to valid plugin list
             foreach (FileInfo pluginFile in pluginFiles)
             {
                 ArrayList FailedRegisterPluginList = new ArrayList();
@@ -124,9 +122,9 @@ namespace f2b_wsl
                     {
                         if (t == null || !t.IsClass || !t.IsPublic || t.IsAbstract || t.GetInterface("IPluginEvent") == null)
                             continue;
-                        plugins.Add(pluginAsm.CreateInstance(t.FullName));
+                        Plugins.Add(pluginAsm.CreateInstance(t.FullName));
                     }
-                    foreach (IPlugin WaitForRegPlugin in plugins)
+                    foreach (IPlugin WaitForRegPlugin in Plugins)
                     {
                         if (WaitForRegPlugin.RegisterPlugin(EventLog))
                         {
@@ -140,7 +138,7 @@ namespace f2b_wsl
                     }
                     foreach(IPlugin FailedPlugin in FailedRegisterPluginList)
                     {
-                        plugins.Remove(FailedPlugin);
+                        Plugins.Remove(FailedPlugin);
                     }
                 }
                 catch (Exception e)
@@ -152,7 +150,7 @@ namespace f2b_wsl
 
         protected override void OnStop()
         {
-            foreach(IPlugin WaitForStopPlugin in plugins)
+            foreach(IPlugin WaitForStopPlugin in Plugins)
             {
                 WaitForStopPlugin.OnDestroy();
             }
@@ -165,19 +163,28 @@ namespace f2b_wsl
             // auto restart these threads.
             while (true)
             {
-                Thread.Sleep(10000);
+                foreach(KeyValuePair<string, Fail2BanEnv> EnvItem in F2BEnvPool)
+                {
+                    var env = EnvItem.Value;
+                    
+                    if (env.GetThreadStatus() != System.Threading.ThreadState.Running)
+                    {
+                        env.StartMonitorThread();
+                    }
+                }
+                Thread.Sleep(10000);/*
                 foreach(IPlugin WaitForCallPlugin in plugins)
                 {
-                    WaitForCallPlugin.TriggerEvent(this, new PluginEventArgs() { EventSource = "test", EventTextContent = "DemoPluginTest", EventType = "test" });
+                    //WaitForCallPlugin.RaiseAfterBadIPDetected( this, new PluginEventArgs() { EventSource = "test", EventTextContent = "DemoPluginTest", EventType = "test" });
                     DumpPlugins();
-                }
+                }*/
             }
         }
 
         private void DumpPlugins()
         {
             string tmpString = "";
-            foreach(IPlugin plugin in plugins)
+            foreach(IPlugin plugin in Plugins)
             {
                 tmpString += string.Format("{0}: ver. {1}; \r\nDescription:{2} \r\n", new string[] {
                     plugin.PluginName,

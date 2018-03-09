@@ -49,6 +49,7 @@
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UnitTest_EnvInit.cs" />
     <Compile Include="UnitTest_OnStart.cs" />
     <Compile Include="UnitTest_LineParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +61,14 @@
     <ProjectReference Include="..\f2b-wsl\f2b-wsl.csproj">
       <Project>{bda1e135-8133-4fee-a803-9124a568dc37}</Project>
       <Name>f2b-wsl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FirewallPolicyPlugin\FirewallPolicyPlugin.csproj">
+      <Project>{5EA28184-3F7D-4643-9F26-28BA974AE232}</Project>
+      <Name>FirewallPolicyPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IPluginAPIs\IPluginAPIs.csproj">
+      <Project>{C9697372-B6E3-4E19-A21D-ACCA4195E5F3}</Project>
+      <Name>IPluginAPIs</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
