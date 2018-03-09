@@ -9,6 +9,13 @@ This is a C# tool that allows the system to automatically set firewall rules bas
 This tool reads the fail2ban.dummy(default, you can modify it in dummy.action), then monitor the dummy file and use windows firewall to add the blocks.
 
 ## How to use
+0. You must installed fail2ban and started rsyslog service.
+
+```
+    service rsyslog start
+    service fail2ban start
+```
+Then please make sure that the logs under /var/logs exists.
 
 1. You need to modify the original fail2ban configurations:
    
