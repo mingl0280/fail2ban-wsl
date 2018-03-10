@@ -1,4 +1,5 @@
-﻿#region "License Declearation"
+﻿#define DIRECT
+#region "License Declearation"
 /*
     fail2ban-wsl: a tool to port fail2ban into windows environment
     Copyright (C) 2018 mingl0280
@@ -38,6 +39,8 @@ namespace FirewallPolicyPlugin
         private static INetFwPolicy2 FwPolicy;
         private static INetFwRule FwRule;
         private static object FwAccessLocker = new object();
+        private static object FwStackLocker = new object();
+        
 
         public override void OnDestroy()
         {
@@ -49,7 +52,8 @@ namespace FirewallPolicyPlugin
             IPAdded = 2010,
             IPRemoved = 2011,
             IPDuplicate = 2012,
-            IPNotExist = 2013
+            IPNotExist = 2013,
+            IPListSet = 2014
         }
 
         public override void OnLoad()
@@ -60,7 +64,8 @@ namespace FirewallPolicyPlugin
                 try
                 {
                     FwRule = FwPolicy.Rules.Item("F2BAutoRule");
-                }catch(Exception)
+                }
+                catch (Exception)
                 {
                     if (FwRule == null)
                     {
@@ -91,6 +96,7 @@ namespace FirewallPolicyPlugin
 
         private void FirewallPolicyModifier_OnBadIPDetected(object sender, PluginEventArgs args)
         {
+#if DIRECT
             if (args.EventTextContent.StartsWith("+"))
             {
                 AddFwBadIP(args.EventTextContent.Substring(1));
@@ -100,8 +106,44 @@ namespace FirewallPolicyPlugin
             {
                 RemoveFwBadIP(args.EventTextContent.Substring(1));
             }
+#else
+            lock (FwStackLocker)
+            {
+
+                string BadIPEventText = args.EventTextContent;
+                string BadIP = BadIPEventText.Substring(1);
+                if (!FwRuleStack.ContainsKey(BadIP))
+                {
+                    FwRuleStack.Add(BadIP, new Stack<int>());
+                }
+                if (args.EventTextContent.StartsWith("+"))
+                {
+                    FwRuleStack[BadIP].Push(1);
+
+                    //AddFwBadIP(args.EventTextContent.Substring(1));
+                    return;
+                }
+                if (args.EventTextContent.StartsWith("-"))
+                {
+                    try
+                    {
+                        FwRuleStack[BadIP].Pop();
+                    }
+                    catch (Exception) { }
+
+                    //RemoveFwBadIP(args.EventTextContent.Substring(1));
+                }
+            }
+
+
+            SetFwBadIPs();
+#endif
         }
 
+        /// <summary>
+        /// check if windows firewall is started or not. It will attempt to start the windows firewall if not started.
+        /// </summary>
+        /// <returns>True = started, False = not started.</returns>
         private bool CheckWinFwStatus()
         {
             ServiceController ctrl = new ServiceController("mpssvc");
@@ -128,6 +170,10 @@ namespace FirewallPolicyPlugin
 
         }
 
+        /// <summary>
+        /// Add a bad ip to firewall
+        /// </summary>
+        /// <param name="IPAddr">ip address string</param>
         protected void AddFwBadIP(string IPAddr)
         {
             if (!FwRule.RemoteAddresses.Contains(IPAddr))
@@ -145,10 +191,14 @@ namespace FirewallPolicyPlugin
             }
             else
             {
-                _logger.WriteEntry("Firewall rule duplicate for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPDuplicate, (short)LogCategories.Log_Info);
+                //_logger.WriteEntry("Firewall rule duplicate for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPDuplicate, (short)LogCategories.Log_Info); // Don't want too much duplicated info
             }
         }
 
+        /// <summary>
+        /// Remove a bad ip from firewall
+        /// </summary>
+        /// <param name="IPAddr">ip address string</param>
         protected void RemoveFwBadIP(string IPAddr)
         {
             if (FwRule.RemoteAddresses.Contains(IPAddr))
@@ -164,7 +214,7 @@ namespace FirewallPolicyPlugin
                 }
                 else
                 {
-                    foreach(string item in IPAddrList)
+                    foreach (string item in IPAddrList)
                     {
                         AfterRmAddrs += "," + item;
                     }
@@ -178,12 +228,45 @@ namespace FirewallPolicyPlugin
                 _logger.WriteEntry("Firewall rule not exist for removal: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPNotExist, (short)LogCategories.Log_Info);
             }
         }
+        #region "StackFwIPProcess"
+#if !DIRECT
+        private static Dictionary<string, Stack<int>> FwRuleStack;
 
+        protected void SetFwBadIPs()
+        {
+            string FwBadIPStr = "";
+            lock (FwAccessLocker)
+            {
+                lock (FwStackLocker)
+                {
+                    foreach (KeyValuePair<string, Stack<int>> BadIPPair in FwRuleStack)
+                    {
+                        if (BadIPPair.Value.Count > 0)
+                            FwBadIPStr += "," + BadIPPair.Key + @"/255.255.255.255";
+                    }
+                    FwBadIPStr = FwBadIPStr.Trim(',');
+                    if (string.IsNullOrEmpty(FwBadIPStr) || string.IsNullOrWhiteSpace(FwBadIPStr))
+                    {
+                        FwRule.RemoteAddresses = "*";
+                        FwRule.Enabled = false;
+                        _logger.WriteEntry("Firewall blocked IP list is empty.", EventLogEntryType.Warning, (int)FwEventIDs.IPListSet, (short)LogCategories.Log_Warning);
+                    }
+                    else
+                    {
+                        FwRule.Enabled = true;
+                        FwRule.RemoteAddresses = FwBadIPStr;
+                        _logger.WriteEntry("Firewall blocked IP addresses set to: \r\n" + FwBadIPStr, EventLogEntryType.Warning, (int)FwEventIDs.IPListSet, (short)LogCategories.Log_Warning);
+                    }
+                }
+            }
+        }
+#endif
+        #endregion
 #if DEBUG
         public void RaiseBIPDeteacted(string IPAddr)
         {
             FirewallPolicyModifier_OnBadIPDetected(null, new PluginEventArgs() { EventSource = "", EventTextContent = IPAddr, EventType ="Det" });
         }
-#endif 
+#endif
     }
 }

@@ -161,6 +161,7 @@ namespace f2b_wsl
         {
             // monitor all Fail2BanEnv to see if thread aborted or not.
             // auto restart these threads.
+            // This thread must be running since the service started.
             DumpPlugins();
             while (true)
             {

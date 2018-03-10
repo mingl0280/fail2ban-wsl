@@ -49,6 +49,7 @@
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UnitTest_EnvChange.cs" />
     <Compile Include="UnitTest_EnvInit.cs" />
     <Compile Include="UnitTest_OnStart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
