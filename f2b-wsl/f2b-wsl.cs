@@ -150,11 +150,16 @@ namespace f2b_wsl
 
         protected override void OnStop()
         {
-            foreach(IPlugin WaitForStopPlugin in Plugins)
+            foreach (KeyValuePair<string, Fail2BanEnv> F2BEnv in F2BEnvPool)
+            {
+                F2BEnv.Value.StopThisEnv();
+            }
+            foreach (IPlugin WaitForStopPlugin in Plugins)
             {
                 WaitForStopPlugin.OnDestroy();
             }
             EventLog.WriteEntry("Service Stopped.", EventLogEntryType.Information, (int)LogIDs.Log_Notice_Quit, (short)LogCategories.Log_Info);
+            F2BEnvMonitorThread.Abort();
         }
 
         private void F2BEnvMonitor()

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PluginAPIs.IPlugin">
+    <Position X="0.5" Y="6.75" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FirewallPolicyPlugin.FirewallPolicyModifier">
+    <Position X="0.5" Y="0.5" Width="3.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="FirewallPolicyPlugin.FirewallPolicyModifier.FwEventIDs">
+        <TypeIdentifier>
+          <NewMemberFileName>FirewallPolicyModifier.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAJAAABAIAAAAAAABAAAAACAQAACAABAAAEAAEQAgA=</HashCode>
+      <FileName>FirewallPolicyModifier.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="PluginAPIs.IPluginEvent">
+    <Position X="5" Y="5.75" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

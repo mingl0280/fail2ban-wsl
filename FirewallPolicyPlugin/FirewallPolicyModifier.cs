@@ -174,7 +174,7 @@ namespace FirewallPolicyPlugin
         /// Add a bad ip to firewall
         /// </summary>
         /// <param name="IPAddr">ip address string</param>
-        protected void AddFwBadIP(string IPAddr)
+        private void AddFwBadIP(string IPAddr)
         {
             if (!FwRule.RemoteAddresses.Contains(IPAddr))
             {
@@ -199,7 +199,7 @@ namespace FirewallPolicyPlugin
         /// Remove a bad ip from firewall
         /// </summary>
         /// <param name="IPAddr">ip address string</param>
-        protected void RemoveFwBadIP(string IPAddr)
+        private void RemoveFwBadIP(string IPAddr)
         {
             if (FwRule.RemoteAddresses.Contains(IPAddr))
             {

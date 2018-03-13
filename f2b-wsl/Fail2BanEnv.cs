@@ -46,6 +46,7 @@ namespace f2b_wsl
         private string CachedDummyFile = "";
         private bool disposedValue = false;
         private static object FwStateLocker = new object();
+        private bool _running = true;
 
         public string F2bDirectoryString { get => _f2bDirectoryString; set => _f2bDirectoryString = value; }
         public List<string> PluginList { get => _pluginList; set => _pluginList = value; }
@@ -76,9 +77,15 @@ namespace f2b_wsl
             //monitorThread.Start();
         }
 
+        public void StopThisEnv()
+        {
+            Fail2BanDummyFileWatcher.EnableRaisingEvents = false;
+            monitorThread.Abort();
+        }
+
         private void DummyMonitor()
         {
-            while (true)
+            while (_running)
             {
                 Thread.Sleep(1000);
                 Thread.Yield();

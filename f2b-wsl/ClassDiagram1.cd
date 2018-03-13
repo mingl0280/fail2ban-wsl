@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="f2b_wsl.Fail2BanService">
+    <Position X="0.5" Y="3.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAABACAAAAAAEACAAAAKAABiAAAAAkAAAAAAAAA=</HashCode>
+      <FileName>f2b-wsl.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="f2b_wsl.Fail2BanEnv" BaseTypeListCollapsed="true">
+    <Position X="4.25" Y="3.25" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AkAAUAAAATEAAACggIAAAAAACxAAAABAKAIAEgMAQBg=</HashCode>
+      <FileName>Fail2BanEnv.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.179" />
+  </Class>
+  <Class Name="PluginAPIs.EventLogEnums">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="PluginAPIs.EventLogEnums.LogCategories" Collapsed="true">
+        <TypeIdentifier />
+      </Enum>
+      <Enum Name="PluginAPIs.EventLogEnums.LogIDs" Collapsed="true">
+        <TypeIdentifier />
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="PluginAPIs.IPlugin" BaseTypeListCollapsed="true">
+    <Position X="8.25" Y="3.25" Width="3.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.106" />
+  </Class>
+  <Class Name="PluginAPIs.PluginEventArgs">
+    <Position X="5" Y="0.5" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="PluginAPIs.IPluginEvent">
+    <Position X="7.5" Y="0.5" Width="3.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Delegate Name="PluginAPIs.AfterBadIPDetectedDelegate">
+    <Position X="2.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier />
+  </Delegate>
+  <Delegate Name="PluginAPIs.OnBadIPDetectedDelegate">
+    <Position X="2.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier />
+  </Delegate>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

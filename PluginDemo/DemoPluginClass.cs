@@ -42,7 +42,7 @@ namespace PluginDemo
         
         public override void OnDestroy()
         {
-            AfterBadIPDetected -= ClassDemo_OnPluginCalled;
+            OnBadIPDetected -= ClassDemo_OnPluginCalled;
             _logger.WriteEntry("This plugin is under OnDestroy event.", EventLogEntryType.Information, (int)DemoPluginEventIDs.Plugin_OnDestroy);
         }
 
@@ -55,7 +55,7 @@ namespace PluginDemo
         {
             try
             {
-                AfterBadIPDetected += ClassDemo_OnPluginCalled;
+                OnBadIPDetected += ClassDemo_OnPluginCalled;
                 _logger = logger;
                 return true;
             }catch(Exception)
