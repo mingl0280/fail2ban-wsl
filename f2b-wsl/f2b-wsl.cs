@@ -143,7 +143,7 @@ namespace f2b_wsl
                 }
                 catch (Exception e)
                 {
-                    EventLog.WriteEntry("Load Plugin " + pluginFile.Name + " Failed." + e.Message, EventLogEntryType.Warning, (int)LogIDs.Log_Error_Plugin, (short)LogCategories.Log_Warning);
+                    EventLog.WriteEntry("Load Plugin " + pluginFile.Name + " Failed." + e.Message + "\r\n"+e.StackTrace, EventLogEntryType.Warning, (int)LogIDs.Log_Error_Plugin, (short)LogCategories.Log_Warning);
                 }
             }
         }

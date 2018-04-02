@@ -27,6 +27,7 @@ using NetFwTypeLib;
 using System.ServiceProcess;
 using static PluginAPIs.EventLogEnums;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FirewallPolicyPlugin
 {
@@ -40,7 +41,9 @@ namespace FirewallPolicyPlugin
         private static INetFwRule FwRule;
         private static object FwAccessLocker = new object();
         private static object FwStackLocker = new object();
-        
+        private static object FwRedirectLock = new object();
+        private static bool RedirectWrite = false;
+        private static Dictionary<string, int> CachedFwItems = new Dictionary<string, int>();
 
         public override void OnDestroy()
         {
@@ -87,6 +90,8 @@ namespace FirewallPolicyPlugin
 
         public override bool RegisterPlugin(EventLog logger)
         {
+            EnvStartInitialize += FirewallPolicyModifier_EnvStartInitialize;
+            EnvEndInitialize += FirewallPolicyModifier_EnvEndInitialize;
             OnBadIPDetected += FirewallPolicyModifier_OnBadIPDetected;
             _logger = logger;
             if (!CheckWinFwStatus())
@@ -94,17 +99,72 @@ namespace FirewallPolicyPlugin
             return true;
         }
 
+        private void FirewallPolicyModifier_EnvEndInitialize(object sender, EventArgs args)
+        {
+            lock (FwRedirectLock)
+            {
+                RedirectWrite = false;
+                WriteAllCached();
+            }
+        }
+
+        private void FirewallPolicyModifier_EnvStartInitialize(object sender, EventArgs args)
+        {
+            lock (FwRedirectLock)
+            {
+                RedirectWrite = true;
+            }
+
+        }
+
+        private void WriteAllCached()
+        {
+            lock (FwAccessLocker)
+            {
+                if (CachedFwItems.Count > 0)
+                {
+                    SetFwBadIPs(CachedFwItems);
+                    CachedFwItems.Clear();
+                }
+            }
+        }
+
         private void FirewallPolicyModifier_OnBadIPDetected(object sender, PluginEventArgs args)
         {
 #if DIRECT
-            if (args.EventTextContent.StartsWith("+"))
+            lock (FwStackLocker)
             {
-                AddFwBadIP(args.EventTextContent.Substring(1));
-                return;
-            }
-            if (args.EventTextContent.StartsWith("-"))
-            {
-                RemoveFwBadIP(args.EventTextContent.Substring(1));
+                if (args.EventTextContent.StartsWith("+"))
+                {
+                    if (RedirectWrite == true)
+                    {
+                        try
+                        {
+                            CachedFwItems.Add(args.EventTextContent.Substring(1), 1);
+                        }
+                        catch (Exception) { }
+                    }
+                    else
+                    {
+                        AddFwBadIP(args.EventTextContent.Substring(1));
+                        return;
+                    }
+                }
+                if (args.EventTextContent.StartsWith("-"))
+                {
+                    if (RedirectWrite == true)
+                    {
+                        try
+                        {
+                            CachedFwItems.Remove(args.EventTextContent.Substring(1));
+                        }
+                        catch (Exception) { }
+                    }
+                    else
+                    {
+                        RemoveFwBadIP(args.EventTextContent.Substring(1));
+                    }
+                }
             }
 #else
             lock (FwStackLocker)
@@ -176,22 +236,26 @@ namespace FirewallPolicyPlugin
         /// <param name="IPAddr">ip address string</param>
         private void AddFwBadIP(string IPAddr)
         {
-            if (!FwRule.RemoteAddresses.Contains(IPAddr))
+            System.Threading.Thread.MemoryBarrier();
+            lock (FwAccessLocker)
             {
-                if (string.IsNullOrEmpty(FwRule.RemoteAddresses) || FwRule.RemoteAddresses == "*")
+                if (!FwRule.RemoteAddresses.Contains(IPAddr))
                 {
-                    FwRule.RemoteAddresses = IPAddr;
-                    FwRule.Enabled = true;
+                    if (string.IsNullOrEmpty(FwRule.RemoteAddresses) || FwRule.RemoteAddresses == "*")
+                    {
+                        FwRule.RemoteAddresses = IPAddr;
+                        FwRule.Enabled = true;
+                    }
+                    else
+                    {
+                        FwRule.RemoteAddresses += "," + IPAddr;
+                    }
+                    _logger.WriteEntry("Firewall rule added for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPAdded, (short)LogCategories.Log_Info);
                 }
                 else
                 {
-                    FwRule.RemoteAddresses += "," + IPAddr;
+                    //_logger.WriteEntry("Firewall rule duplicate for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPDuplicate, (short)LogCategories.Log_Info); // Don't want too much duplicated info
                 }
-                _logger.WriteEntry("Firewall rule added for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPAdded, (short)LogCategories.Log_Info);
-            }
-            else
-            {
-                //_logger.WriteEntry("Firewall rule duplicate for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPDuplicate, (short)LogCategories.Log_Info); // Don't want too much duplicated info
             }
         }
 
@@ -201,50 +265,58 @@ namespace FirewallPolicyPlugin
         /// <param name="IPAddr">ip address string</param>
         private void RemoveFwBadIP(string IPAddr)
         {
-            if (FwRule.RemoteAddresses.Contains(IPAddr))
+            lock (FwAccessLocker)
             {
-                List<string> IPAddrList = new List<string>();
-                IPAddrList.AddRange(FwRule.RemoteAddresses.Split(','));
-                IPAddrList.RemoveAll(x => x.Contains(IPAddr));
-                string AfterRmAddrs = "";
-                if (IPAddrList.Count < 1)
+                if (FwRule.RemoteAddresses.Contains(IPAddr))
                 {
-                    FwRule.Enabled = false;
-                    FwRule.RemoteAddresses = "*";
+                    List<string> IPAddrList = new List<string>();
+                    IPAddrList.AddRange(FwRule.RemoteAddresses.Split(','));
+                    IPAddrList.RemoveAll(x => x.Contains(IPAddr));
+                    string AfterRmAddrs = "";
+                    if (IPAddrList.Count < 1)
+                    {
+                        FwRule.Enabled = false;
+                        FwRule.RemoteAddresses = "*";
+                    }
+                    else
+                    {
+                        foreach (string item in IPAddrList)
+                        {
+                            AfterRmAddrs += "," + item;
+                        }
+                        AfterRmAddrs = AfterRmAddrs.Trim(',');
+                        FwRule.RemoteAddresses = AfterRmAddrs;
+                    }
+                    _logger.WriteEntry("Firewall rule removed for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPRemoved, (short)LogCategories.Log_Info);
                 }
                 else
                 {
-                    foreach (string item in IPAddrList)
-                    {
-                        AfterRmAddrs += "," + item;
-                    }
-                    AfterRmAddrs = AfterRmAddrs.Trim(',');
-                    FwRule.RemoteAddresses = AfterRmAddrs;
+                    _logger.WriteEntry("Firewall rule not exist for removal: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPNotExist, (short)LogCategories.Log_Info);
                 }
-                _logger.WriteEntry("Firewall rule removed for IP: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPRemoved, (short)LogCategories.Log_Info);
-            }
-            else
-            {
-                _logger.WriteEntry("Firewall rule not exist for removal: " + IPAddr, EventLogEntryType.Warning, (int)FwEventIDs.IPNotExist, (short)LogCategories.Log_Info);
             }
         }
         #region "StackFwIPProcess"
 #if !DIRECT
         private static Dictionary<string, Stack<int>> FwRuleStack;
-
-        protected void SetFwBadIPs()
+#endif
+        protected void SetFwBadIPs(Dictionary<string, int> FwRuleStack)
         {
             string FwBadIPStr = "";
             lock (FwAccessLocker)
             {
                 lock (FwStackLocker)
                 {
-                    foreach (KeyValuePair<string, Stack<int>> BadIPPair in FwRuleStack)
+                    List<string> IPAddrList = new List<string>();
+                    IPAddrList.AddRange(FwRule.RemoteAddresses.Replace("/255.255.255.255","").Split(','));
+                    IPAddrList.AddRange(FwRuleStack.Keys);
+                    List<string> DeDupedList = IPAddrList.Distinct().ToList();
+                    foreach (var BadIPStr in DeDupedList)
                     {
-                        if (BadIPPair.Value.Count > 0)
-                            FwBadIPStr += "," + BadIPPair.Key + @"/255.255.255.255";
+                        if (BadIPStr != "*")
+                        FwBadIPStr += BadIPStr + @"/255.255.255.255,";
                     }
                     FwBadIPStr = FwBadIPStr.Trim(',');
+                    
                     if (string.IsNullOrEmpty(FwBadIPStr) || string.IsNullOrWhiteSpace(FwBadIPStr))
                     {
                         FwRule.RemoteAddresses = "*";
@@ -260,12 +332,12 @@ namespace FirewallPolicyPlugin
                 }
             }
         }
-#endif
+
         #endregion
 #if DEBUG
         public void RaiseBIPDeteacted(string IPAddr)
         {
-            FirewallPolicyModifier_OnBadIPDetected(null, new PluginEventArgs() { EventSource = "", EventTextContent = IPAddr, EventType ="Det" });
+            FirewallPolicyModifier_OnBadIPDetected(null, new PluginEventArgs() { EventSource = "", EventTextContent = IPAddr, EventType = "Det" });
         }
 #endif
     }

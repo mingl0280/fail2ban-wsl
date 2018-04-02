@@ -22,6 +22,12 @@
         "Entry"
         {
         "MsmKey" = "8:_158AD5A193A12E7090082CC7924BAA3F"
+        "OwnerKey" = "8:_B286BA74448549F781DE843E4C5C321C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_158AD5A193A12E7090082CC7924BAA3F"
         "OwnerKey" = "8:_E3B49AABA8F249179FB83306C670D853"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -40,6 +46,12 @@
         "Entry"
         {
         "MsmKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B286BA74448549F781DE843E4C5C321C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -64,6 +76,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E262D8553770AE22FA34547A046ED24C"
+        "OwnerKey" = "8:_B286BA74448549F781DE843E4C5C321C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E262D8553770AE22FA34547A046ED24C"
         "OwnerKey" = "8:_E3B49AABA8F249179FB83306C670D853"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -82,13 +100,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E262D8553770AE22FA34547A046ED24C"
+        "OwnerKey" = "8:_B286BA74448549F781DE843E4C5C321C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_AEB19145718B4987B50234CF635ACBA8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_E262D8553770AE22FA34547A046ED24C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -122,6 +146,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
             }
         }
         "Release"
@@ -1086,6 +1118,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{5EA28184-3F7D-4643-9F26-28BA974AE232}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B286BA74448549F781DE843E4C5C321C"
+            {
+            "SourcePath" = "8:..\\PersistantFwRules\\obj\\Release\\PersistantFwRules.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E78A5D143865420397CF4C903EC875AA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{F58DC036-C7B8-442D-BA96-7B7747BD2691}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

@@ -95,6 +95,7 @@ namespace f2b_wsl
         private void InitJails()
         {
             StreamReader sr = new StreamReader(_f2bDirectoryString + @"\action.d\dummy-wsl.conf");
+
             while (!sr.EndOfStream)
             {
                 string confline = sr.ReadLine();
@@ -109,13 +110,16 @@ namespace f2b_wsl
                     break;
                 }
             }
+            sr.Close();
+            sr.Dispose();
             try
             {
                 Fail2BanDummyFileWatcher = new FileSystemWatcher(DummyFileDirectory + @"\");
                 Fail2BanDummyFileWatcher.Changed += Fail2BanDummyFileWatcher_Changed;
                 Fail2BanDummyFileWatcher.Deleted += Fail2BanDummyFileWatcher_Deleted;
+                Thread.Sleep(5000);
 #if DEBUG
-                Thread.Sleep(10000);
+                Thread.Sleep(5000);
 #endif
                 Fail2BanDummyFileWatcher.EnableRaisingEvents = true;
 
@@ -125,7 +129,17 @@ namespace f2b_wsl
                 _parentService.EventLog.WriteEntry("FSW init failed.\r\n" + e.Message + "\r\n" + e.StackTrace, EventLogEntryType.Error, (int)LogIDs.Log_Error_ParseFile, (short)LogCategories.Log_Error);
                 throw new Exception("Forece Quit - Env not init properly.");
             }
+            foreach (IPlugin plugin in _parentService.Plugins)
+            {
+                plugin.RaiseBeginInitialize(this, new EventArgs());
+            }
+            Thread.MemoryBarrier();
             FileContentChangeHandle(DummyFileDirectory + "\\" + DummyFileName);
+            foreach (IPlugin plugin in _parentService.Plugins)
+            {
+                plugin.RaiseEndInitialize(this, new EventArgs());
+            }
+            Thread.MemoryBarrier();
         }
 
         private void Fail2BanDummyFileWatcher_Deleted(object sender, FileSystemEventArgs e)
@@ -149,7 +163,7 @@ namespace f2b_wsl
         {
             lock (IOLock)
             {
-                _parentService.EventLog.WriteEntry(e.Name + "\r\n" + DummyFileName, EventLogEntryType.Information, (int)LogIDs.Log_Notice_PlainInfo, (short)LogCategories.Log_Info);
+                //_parentService.EventLog.WriteEntry(e.Name + "\r\n" + DummyFileName, EventLogEntryType.Information, (int)LogIDs.Log_Notice_PlainInfo, (short)LogCategories.Log_Info);
                 if (IOFile.Contains(e.FullPath) || e.ChangeType != WatcherChangeTypes.Changed || e.Name != DummyFileName)
                     return;
                 FileContentChangeHandle(e.FullPath);
@@ -184,7 +198,7 @@ namespace f2b_wsl
                 }
 
                 //Only send new content to plugins
-                string DifferentPart = (string.IsNullOrEmpty(CachedDummyFile) || string.IsNullOrWhiteSpace(CachedDummyFile))? tmpFile: tmpFile.Replace(CachedDummyFile, "");
+                string DifferentPart = (string.IsNullOrEmpty(CachedDummyFile) || string.IsNullOrWhiteSpace(CachedDummyFile)) ? tmpFile : tmpFile.Replace(CachedDummyFile, "");
                 string[] DifferentRowsArray = DifferentPart.Split('\n');
                 foreach (string DiffRowContent in DifferentRowsArray)
                 {

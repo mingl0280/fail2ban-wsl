@@ -32,13 +32,19 @@ namespace PluginAPIs
     {
         event AfterBadIPDetectedDelegate AfterBadIPDetected;
         event OnBadIPDetectedDelegate OnBadIPDetected;
+        event BeginFirstInitialize EnvStartInitialize;
+        event EndFirstInitialize EnvEndInitialize;
 
         void RaiseAfterBadIPDetected(object sender, PluginEventArgs args);
         void RaiseOnBadIPDetected(object sender, PluginEventArgs args);
+        void RaiseBeginInitialize(object sender, EventArgs args);
+        void RaiseEndInitialize(object sender, EventArgs args);
     }
 
     public delegate void AfterBadIPDetectedDelegate(object sender, PluginEventArgs args);
     public delegate void OnBadIPDetectedDelegate(object sender, PluginEventArgs args);
+    public delegate void BeginFirstInitialize(object sender, EventArgs args);
+    public delegate void EndFirstInitialize(object sender, EventArgs args);
 
     public abstract class IPlugin : IPluginEvent
     {
@@ -47,6 +53,8 @@ namespace PluginAPIs
         /// This delegate happens when an record detected by the mainprogram.
         /// </summary>
         public event OnBadIPDetectedDelegate OnBadIPDetected;
+        public event BeginFirstInitialize EnvStartInitialize;
+        public event EndFirstInitialize EnvEndInitialize;
 
         protected EventLog _logger;
         /// <summary>
@@ -109,7 +117,16 @@ namespace PluginAPIs
         {
             AfterBadIPDetected?.Invoke(sender, args);
         }
-        
+
+        public void RaiseBeginInitialize(object sender, EventArgs args)
+        {
+            EnvStartInitialize?.Invoke(sender, args);
+        }
+
+        public void RaiseEndInitialize(object sender, EventArgs args)
+        {
+            EnvEndInitialize?.Invoke(sender, args);
+        }
     }
 
     public class PluginEventArgs : EventArgs
