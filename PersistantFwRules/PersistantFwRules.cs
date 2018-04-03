@@ -61,6 +61,7 @@ namespace PersistantFwRules
         public override void OnDestroy()
         {
             DumpBadIPList();
+            DumpTimer.Stop();
             _logger.WriteEntry("Plugin Destroyed" + _pluginName, EventLogEntryType.Warning, (int)LogIDs.Log_Plugin_Deactivated, (short)LogCategories.Log_Info);
         }
 
@@ -96,6 +97,7 @@ namespace PersistantFwRules
                 File.Create(PersistantRulesFileName).Close();
             }
             ReadExistingPersistantRules();
+            DumpTimer.Start();
             _logger.WriteEntry("F2B Firewall Plugin Initialized.", EventLogEntryType.Information, (int)LogIDs.Log_Plugin_Activated, (short)LogCategories.Log_Info);
         }
 
